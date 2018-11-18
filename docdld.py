@@ -2,6 +2,9 @@
 
 
 import requests
+from unzip import *
+
+
 
 def filedld(url, name):
     print "downloading with requests"
@@ -12,5 +15,6 @@ def filedld(url, name):
 
 if __name__ == "__main__":
     url = "http://www.3gpp.org/ftp/Specs/archive/38_series/38.331/38331-f30.zip"
-    name = "d:\\8331-f30.zip"
+    name = "d:\\38331-f30.zip"
     filedld(url, name)
+    un_zip(name)
