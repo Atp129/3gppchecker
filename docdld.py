@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
-
+#-*- coding:utf-8 -*-
 
 import requests
 from unzip import *
+from specdecode import *
 
 
 
@@ -14,7 +14,9 @@ def filedld(url, name):
         code.write(r.content)
 
 if __name__ == "__main__":
-    url = "http://www.3gpp.org/ftp/Specs/archive/38_series/38.331/38331-f30.zip"
-    name = "d:\\38331-f30.zip"
-    filedld(url, name)
-    un_zip(name)
+    # url = "http://www.3gpp.org/ftp/Specs/archive/38_series/38.331/38331-f30.zip"
+    # name = "d:\\38331-f30.zip"
+    # filedld(url, name)
+    # un_zip(name)
+
+    saveashtml(r'D:\38331-f30.zip_files\38331-f30.doc', r'd:\38331-f30.html')
