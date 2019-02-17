@@ -197,12 +197,13 @@ class specDoc(object):
         pass
 
     def createdoc(self, file, start, end):
-        self.app.Selection.SetRange(start, end)
-        self.app.Selection.Copy()
-        doc2 = self.app.Documents.Add()
-        doc2.Content.Paste()
-        doc2.SaveAs(file, 8)
-        doc.Close()
+        if start > end:
+            self.app.Selection.SetRange(start, end)
+            self.app.Selection.Copy()
+            doc2 = self.app.Documents.Add()
+            doc2.Content.Paste()
+            doc2.SaveAs(file, 8)
+            doc.Close()
 
 
 class chapter(object):
