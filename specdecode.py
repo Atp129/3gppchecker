@@ -2,7 +2,7 @@
 
 from win32com import client as wc
 import re
-import chardet
+
 
 def saveashtml(file, targetfile):
 
@@ -64,25 +64,25 @@ def lstSection(doc):
         para = doc.Sections[i].Range.Paragraphs
         for j in range(0, para.Count):
             # print para[j].Style.Description
-            print para[j].ID
+            print(para[j].ID)
 
 
 def lstBookmarks(doc):
     print doc.Bookmarks.Count
     for i in range(0, doc.Bookmarks.Count):
-        print doc.Bookmarks[i].Range.Text
+        print(doc.Bookmarks[i].Range.Text)
 
 
 def lstContent(doc):
     print doc.Content.Count
     # for i in range(0, doc.Content.Count):
-    #     print doc.Content[i].Range.Text
+    #     print(doc.Content[i].Range.Text)
 
 
 def lstCaptionLabels(doc):
     print doc.HyperLinks.Count
     # for i in range(0, doc.Content.Count):
-    #     print doc.Content[i].Range.Text
+    #     print()
 
 
 def findword(App, word):
@@ -96,7 +96,7 @@ def findword(App, word):
     return pos
 
 
-class specDoc(object):
+class SpecDoc(object):
     def __init__(self, doc, app):
         self.doc = doc
         self.app = app
@@ -120,25 +120,25 @@ class specDoc(object):
 
         for i in range(0, ParaCount):
             try:
-                print self.doc.Paragraphs[i].Range.Text
+                print(self.doc.Paragraphs[i].Range.Text)
                 # print self.doc.Paragraphs[i].Range.Start
                 # print self.doc.Paragraphs[i].Range.End
-                print self.doc.Paragraphs[i].Range.Style.NameLocal
+                print(self.doc.Paragraphs[i].Range.Style.NameLocal)
 
                 # print self.scanstat
 
                 docRange = self.doc.Paragraphs[i].Range
 
                 if self.scanstat == 'menu':
-                    self.getMenu(docRange)
+                    self.getmenu(docRange)
                 elif self.scanstat == 'reference':
-                    self.getRef(docRange)
+                    self.getref(docRange)
                 elif self.scanstat == 'content':
-                    self.getContent(docRange)
+                    self.getcontent(docRange)
             except:
                 pass
 
-    def createMenu(self):
+    def createmenu(self):
         file = self.name[0:-4] + 'Menu'
         print file
         self.createdoc(file, self.menuStart, self.menuEnd)
@@ -146,7 +146,7 @@ class specDoc(object):
     def splitdoc(self):
         self.createdoc()
 
-    def getMenu(self, range):
+    def getmenu(self, range):
         if 'TOC' in range.Style.NameLocal:
             if self.menuStart == -1:
                 self.menuStart = range.Start
@@ -155,7 +155,7 @@ class specDoc(object):
             self.scanstat = 'reference'
         return self.menuStart, self.menuEnd
 
-    def getRef(self, range):
+    def getref(self, range):
         if 'Guidance' in range.Style.NameLocal:
             if self.refStart == -1:
                 self.refStart =range.Start
@@ -164,7 +164,7 @@ class specDoc(object):
             self.scanstat = 'content'
         return self.refStart, self.refEnd
 
-    def getContent(self, range):
+    def getcontent(self, range):
         a = range.Style.NameLocal
 
         if u'标题' in a:
@@ -177,8 +177,8 @@ class specDoc(object):
             self.lastPara = 'text'
             self.contentEnd = range.End
 
-    def recordChapter(self):
-        newChapter = chapter()
+    def recordchapter(self):
+        newChapter = Chapter()
         newChapter.Start = self.contentStart
         newChapter.End = self.contentEnd
         newChapter.titlelist = self.currentChapterTitle
@@ -187,13 +187,13 @@ class specDoc(object):
         self.contentEnd = -1
         self.currentChapterTitle = []
 
-    def createContent(self):
+    def createcontent(self):
         for item in self.chapterlist:
             for title in item.titlelist:
                 filename = self.name[0:-4] + get_chapter_id(title) + '.html'
                 self.createdoc(filename, item.Start, item.End)
 
-    def getHC(self):
+    def gethistory(self):
         pass
 
     def createdoc(self, file, start, end):
@@ -206,7 +206,7 @@ class specDoc(object):
             doc.Close()
 
 
-class chapter(object):
+class Chapter(object):
     pass
 
 
@@ -222,6 +222,7 @@ def get_chapter_id(title):
     if result:
         return result.group('id')
     return None
+
 
 if __name__ == "__main__":
     file = r'D:\38124-f10\38124-f10.doc'
@@ -242,12 +243,12 @@ if __name__ == "__main__":
     # print doc.Range(start, end).Text
     # print doc.Range(start, end).Text
 
-    doc38124 = specDoc(doc, App)
+    doc38124 = SpecDoc(doc, App)
     doc38124.scan()
-    print doc38124.refEnd
-    print doc38124.menuEnd
-    print doc38124.refStart
-    print doc38124.chapterlist
+    print(doc38124.refEnd)
+    print(doc38124.menuEnd)
+    print(doc38124.refStart)
+    print(doc38124.chapterlist)
     # doc38124.createMenu()
     doc38124.createContent()
 
