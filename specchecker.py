@@ -14,6 +14,7 @@ import re
 import os
 
 from loggingset import *
+from unzip import *
 
 
 def open_doc(file):
@@ -66,12 +67,12 @@ class Chapter(object):
         if 'Annex' in title:   # 文档Annex 格式
             string = title.split(':', 1)
         else:                   # 一般章节
-            string = title.split('\t', 1)
+            string = title.split('\t')
         self.id = string[0]
         self.name = string[1]
         self.start = None
         self.end = None
-        debug(string)
+        info(string)
 
     def set_start(self, start):
         self.start = start
@@ -127,6 +128,7 @@ class SpecDoc(object):
                     # 内容开始未记录时，检查是否满足开始条件，如果满足，则记录开始点
             except (Exception) as e:
                 warning(e)
+
             if self.contents[self.content_index].name == 'title':
                 self.check_name(current_para)
 
@@ -206,14 +208,59 @@ class SpecDoc(object):
                 self.version = match.group('version')
 
     def generate(self, path):
-        filename = self.id + self.version + self.new_chapter.id
         for chapter in self.chapter_list:
+            id = re.sub(r"\x0c", '', chapter.id)
+            print([chapter.id, chapter.name])
+            mkdir(os.path.join(path, self.id, self.version))
+            filename = id + '.html'
+            info(filename)
             self.app.Selection.SetRange(chapter.start, chapter.end)
             self.app.Selection.Copy()
             doc2, app2 = new_doc()
             doc2.Content.Paste()
-            doc2.SaveAs(os.path.join(path, filename), 8)
+            doc2.SaveAs(os.path.join(path, self.id, self.version, filename), 8)
             doc2.Close()
+
+
+def mkdir(path):
+    folder = os.path.exists(path)
+    if not folder:  # 判断是否存在文件夹如果不存在则创建为文件夹
+        os.makedirs(path)  # makedirs 创建文件时如果路径不存在会创建这个路径
+    else:
+        info('path exist')
+
+
+def convert_path(path):
+    g = os.walk(path)
+    unzip_path = r'D:\unzip'
+
+    for path, dir_list, file_list in g:
+        for file_name in file_list:
+            zipped_file = os.path.join(path, file_name)
+            info(zipped_file)
+            un_zip(zipped_file, unzip_path)
+
+
+def convert_unzip(path):
+    g = os.walk(path)
+
+    for path, dir_list, file_list in g:
+        for file_name in file_list:
+            file = os.path.join(path, file_name)
+            info(file)
+            if '.doc' in file_name:
+                convert_file(file)
+
+
+def convert_file(file):
+    path = r'C:\Users\romain.li\PycharmProjects\ghostwriter\html'
+    spec_doc = SpecDoc(file)
+    spec_doc.scan()
+    try:
+        spec_doc.generate(path)
+    except Exception as e:
+        warning(e)
+
 
 if __name__ == '__main__':
     file = r'C:\Users\romain.li\PycharmProjects\ghostwriter\38124-f10.doc'
@@ -221,6 +268,7 @@ if __name__ == '__main__':
 
     lst = []
     path = r'C:\Users\romain.li\PycharmProjects\ghostwriter\html'
+    root = r''
     # for i in range(1,100):
     #     name = str(i) + ' xxxx'
     #     x = Chapter(name)
@@ -240,14 +288,23 @@ if __name__ == '__main__':
     #     print(match.group('id'))
     #     print(match.group('version'))
     #     # print(match.group('name'))
+    # id = re.sub(r"[\W]", '_', 'Annex A (informative)')
+    # print(id)
 
-    doc38214.scan()
+    # doc38214.scan()
+    #
+    # for chapter in doc38214.chapter_list:
+    #     print(chapter.id, chapter.name)
+    #     print(chapter.start, chapter.end)
+    #
+    # for ref in doc38214.ref_list:
+    #     print(ref)
+    #
+    # try:
+    #     doc38214.generate(path)
+    # except Exception as e:
+    #     warning(e)
 
-    for chapter in doc38214.chapter_list:
-        print(chapter.id, chapter.name)
-        print(chapter.start, chapter.end)
-
-    for ref in doc38214.ref_list:
-        print(ref)
-
-    doc38214.generate(path)
+    # convert_path(r'D:\spec\38series')
+    unzip_path = r'D:\unzip'
+    convert_unzip(unzip_path)

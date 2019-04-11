@@ -4,14 +4,15 @@
 import zipfile
 import os
 
-def un_zip(file_name):
+
+def un_zip(file_name, path):
     """unzip zip file"""
     zip_file = zipfile.ZipFile(file_name)
-    if os.path.isdir(file_name + "_files"):
+    if os.path.isdir(path):
         pass
     else:
-        os.mkdir(file_name + "_files")
+        os.mkdir(path)
     for names in zip_file.namelist():
-        zip_file.extract(names, file_name + "_files/")
+        zip_file.extract(names, path)
     zip_file.close()
 
