@@ -1,13 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
 # # @author: Hongkang LI
-# @license: (C) Copyright 1990-2021, UNISOC Technologies Corporation Limited.
-# @contact: romain.li@unisoc.com
-# @software: unisoc
-# @file: specchecker.py
-# @time: 2019/4/9 19:16
-# @desc: 
-#
 
 from win32com import client as wc
 import re
